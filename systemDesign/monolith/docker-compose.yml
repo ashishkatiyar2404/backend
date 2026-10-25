@@ -1,12 +1,17 @@
 services:
   redis:
     image: redis:7-alpine
+
   nginx:
     image: nginx
     ports:
-      - 8000:80
+      - "8000:80"
     volumes:
-      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - server0
+      - server1
+      - server2
 
   server0:
     build: ./BEserver
@@ -14,8 +19,11 @@ services:
       - ./BEserver/.env
     environment:
       - SERVER_NAME=ZERO_SERVER
+      - REDIS_URL=redis://redis:6379
     ports:
-      - 5000:7000
+      - "5000:7000"
+    depends_on:
+      - redis
 
   server1:
     build: ./BEserver
@@ -23,8 +31,11 @@ services:
       - ./BEserver/.env
     environment:
       - SERVER_NAME=FIRST_SERVER
+      - REDIS_URL=redis://redis:6379
     ports:
-      - 5001:7000
+      - "5001:7000"
+    depends_on:
+      - redis
 
   server2:
     build: ./BEserver
@@ -32,5 +43,8 @@ services:
       - ./BEserver/.env
     environment:
       - SERVER_NAME=SECOND_SERVER
+      - REDIS_URL=redis://redis:6379
     ports:
-      - 5002:7000
+      - "5002:7000"
+    depends_on:
+      - redis
