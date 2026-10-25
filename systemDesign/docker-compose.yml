@@ -1,7 +1,36 @@
 services:
+  redis:
+    image: redis:7-alpine
   nginx:
     image: nginx
     ports:
       - 8000:80
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+
+  server0:
+    build: ./BEserver
+    env_file:
+      - ./BEserver/.env
+    environment:
+      - SERVER_NAME=ZERO_SERVER
+    ports:
+      - 5000:7000
+
+  server1:
+    build: ./BEserver
+    env_file:
+      - ./BEserver/.env
+    environment:
+      - SERVER_NAME=FIRST_SERVER
+    ports:
+      - 5001:7000
+
+  server2:
+    build: ./BEserver
+    env_file:
+      - ./BEserver/.env
+    environment:
+      - SERVER_NAME=SECOND_SERVER
+    ports:
+      - 5002:7000
